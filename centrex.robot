@@ -46,10 +46,10 @@ Login
   ${number_of_items}=  Get Length  ${items}
   ${tenderAttempts}=   Convert To String   ${tender_data.data.tenderAttempts}
   Switch Browser  ${username}
-  Wait Until Page Contains Element  xpath=//a[@href="https://eauction.centrex.com.ua/tenders"]  10
-  Click Element  xpath=//a[@href="https://eauction.centrex.com.ua/tenders"]
-  Click Element  xpath=//a[@href="https://eauction.centrex.com.ua/tenders/index"]
-  Click Element  xpath=//a[contains(@href,"https://eauction.centrex.com.ua/buyer/tender/create")]
+  Wait Until Page Contains Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders"]  10
+  Click Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders"]
+  Click Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders/index"]
+  Click Element  xpath=//a[contains(@href,"http://eauction.centrex.com.ua/buyer/tender/create")]
   Select From List By Value  name=tender_method  open_${tender_data.data.procurementMethodType}
   Conv And Select From List By Value  name=Tender[value][valueAddedTaxIncluded]  ${tender_data.data.value.valueAddedTaxIncluded}
   ConvToStr And Input Text  name=Tender[value][amount]  ${tender_data.data.value.amount}
@@ -165,9 +165,9 @@ Login
 Пошук тендера по ідентифікатору
   [Arguments]  ${username}  ${tender_uaid}
   Switch browser  ${username}
-  Go To  https://eauction.centrex.com.ua
-  Click Element  xpath=//a[@href="https://eauction.centrex.com.ua/tenders"]
-  Click Element  xpath=//a[@href="https://eauction.centrex.com.ua/tenders/index"]
+  Go To  http://eauction.centrex.com.ua
+  Click Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders"]
+  Click Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders/index"]
   Wait Until Element Is Visible  id=more-filter
   Wait Until Keyword Succeeds  10 x  0.4 s  Run Keywords
   ...  Click Element  id=more-filter
@@ -346,8 +346,8 @@ Login
   Wait Until Element Is Visible  name=delete_bids
   ${url}=  Log Location
   Run Keyword If  ${status}
-  ...  Go To  https://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
-  ...  ELSE  Go To  https://eauction.centrex.com.ua/bids/decline/${url.split('?')[0].split('/')[-1]}
+  ...  Go To  http://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
+  ...  ELSE  Go To  http://eauction.centrex.com.ua/bids/decline/${url.split('?')[0].split('/')[-1]}
   Go To  ${url}
   Wait Until Keyword Succeeds  6 x  30 s  Run Keywords
   ...  Reload Page
@@ -373,7 +373,7 @@ Login
   Click Element  xpath=//button[contains(text(), 'Відправити')]
   Wait Until Element Is Visible  name=delete_bids
   ${url}=  Log Location
-  Go To  https://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
+  Go To  http://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
   Go To  ${url}
 
 Завантажити документ в ставку
@@ -390,7 +390,7 @@ Login
   Click Element  xpath=//button[contains(text(), 'Відправити')]
   Wait Until Element Is Visible  name=delete_bids
   ${url}=  Log Location
-  Go To  https://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
+  Go To  http://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
   Go To  ${url}
 
 Завантажити фінансову ліцензію
