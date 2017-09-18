@@ -13,6 +13,10 @@ def convert_time(date):
     return timezone('Europe/Kiev').localize(date).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
 
 
+def convert_decision_date(date):
+    date_obj = datetime.strptime(date, "%d/%m/%Y")
+    return date_obj.strftime("%Y-%m-%d")
+
 def convert_datetime_to_centrex_format(isodate):
     iso_dt = parse_date(isodate)
     day_string = iso_dt.strftime("%d/%m/%Y %H:%M")
@@ -22,20 +26,21 @@ def convert_datetime_to_centrex_format(isodate):
 def convert_string_from_dict_centrex(string):
     return {
         u"грн": u"UAH",
+        u"Голландський аукціон": u"dgfInsider",
         u"True": u"1",
         u"False": u"0",
-        u'Код CAV': u'CAV',
+        u'Класифікація згідно CAV': u'CAV',
         u'з урахуванням ПДВ': True,
         u'без урахуванням ПДВ': False,
         u'очiкування пропозицiй': u'active.tendering',
         u'перiод уточнень': u'active.enquires',
         u'аукцiон': u'active.auction',
         u'квалiфiкацiя переможця': u'active.qualification',
-        u'торги відмінено': u'unsuccessful',
-        u'завершена': u'complete',
-        u'вiдмiнена': u'cancelled',
+        u'торги не відбулися': u'unsuccessful',
+        u'продаж завершений': u'complete',
+        u'торги відмінено': u'cancelled',
         u'торги були відмінені.': u'active',
-        u'Юридична Інформація Майданчиків': u'x_dgfPlatformLegalDetails',
+        u'Юридична Інформація про Майданчики': u'x_dgfPlatformLegalDetails',
         u'Презентація': u'x_presentation',
         u'Договір про нерозголошення (NDA)': u'x_nda',
         u'Публічний Паспорт Активу': u'x_dgfPublicAssetCertificate',
@@ -59,38 +64,32 @@ def adapt_procuringEntity(role_name, tender_data):
 
 def adapt_view_data(value, field_name):
     if field_name == 'value.amount':
-        value = float(value.split(' ')[0])
-    elif field_name == 'value.currency':
-        value = value.split(' ')[1]
-    elif field_name == 'value.valueAddedTaxIncluded':
-        value = ' '.join(value.split(' ')[2:])
+        value = float(value)
     elif field_name == 'minimalStep.amount':
         value = float(value.split(' ')[0])
     elif field_name == 'tenderAttempts':
         value = int(value)
-    elif 'unit.name' in field_name:
-        value = value.split(' ')[1]
     elif 'quantity' in field_name:
         value = float(value.split(' ')[0])
     elif 'questions' in field_name and '.date' in field_name:
         value = convert_time(value.split(' - ')[0])
     elif field_name == 'dgfDecisionDate':
-        return value
+        return convert_decision_date(value.split(" ")[-1])
+    elif field_name == 'dgfDecisionID':
+        value = value.split(" ")[1]
     elif 'Date' in field_name:
         value = convert_time(value)
     return convert_string_from_dict_centrex(value)
 
 
 def adapt_view_item_data(value, field_name):
-    if 'unit.name' in field_name:
-        value = ' '.join(value.split(' ')[1:])
-    elif 'quantity' in field_name:
+    if 'quantity' in field_name:
         value = float(value.split(' ')[0])
     return convert_string_from_dict_centrex(value)
 
 
 def get_upload_file_path():
-    return os.path.join(os.getcwd(), 'src/robot_tests.broker.centrex/testFileForUpload.txt')
+    return os.path.join(os.getcwd(), 'src', 'robot_tests.broker.centrex', 'testFileForUpload.txt')
 
 
 def centrex_download_file(url, file_name, output_dir):
