@@ -31,6 +31,7 @@ Library  centrex_service.py
 
 Login
   [Arguments]  ${username}
+  Click Element  xpath=//a[@href="/login"]
   Wait Until Page Contains Element  id=loginform-username  10
   Input text  id=loginform-username  ${USERS.users['${username}'].login}
   Input text  id=loginform-password  ${USERS.users['${username}'].password}
@@ -46,10 +47,10 @@ Login
   ${number_of_items}=  Get Length  ${items}
   ${tenderAttempts}=   Convert To String   ${tender_data.data.tenderAttempts}
   Switch Browser  ${username}
-  Wait Until Page Contains Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders"]  10
-  Click Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders"]
-  Click Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders/index"]
-  Click Element  xpath=//a[contains(@href,"http://eauction.centrex.com.ua/buyer/tender/create")]
+  Wait Until Page Contains Element  xpath=//a[@href="http://centrex.byustudio.in.ua/tenders"]  10
+  Click Element  xpath=//a[@href="http://centrex.byustudio.in.ua/tenders"]
+  Click Element  xpath=//a[@href="http://centrex.byustudio.in.ua/tenders/index"]
+  Click Element  xpath=//a[contains(@href,"http://centrex.byustudio.in.ua/buyer/tender/create")]
   Select From List By Value  name=tender_method  open_${tender_data.data.procurementMethodType}
   Conv And Select From List By Value  name=Tender[value][valueAddedTaxIncluded]  ${tender_data.data.value.valueAddedTaxIncluded}
   ConvToStr And Input Text  name=Tender[value][amount]  ${tender_data.data.value.amount}
@@ -165,21 +166,18 @@ Login
 Пошук тендера по ідентифікатору
   [Arguments]  ${username}  ${tender_uaid}
   Switch browser  ${username}
-  Go To  http://eauction.centrex.com.ua
-  Click Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders"]
-  Click Element  xpath=//a[@href="http://eauction.centrex.com.ua/tenders/index"]
-  Wait Until Element Is Visible  id=more-filter
-  Wait Until Keyword Succeeds  10 x  0.4 s  Run Keywords
-  ...  Click Element  id=more-filter
-  ...  AND  Wait Until Element Is Visible  name=TendersSearch[tender_cbd_id]
-  Input text  name=TendersSearch[tender_cbd_id]  ${tender_uaid}
-  Click Element  xpath=//button[@tid="search"]
+  Go To  http://centrex.byustudio.in.ua/tenders/index
+  ${status}=  Run Keyword And Return Status  Wait Until Element Is Visible  xpath=//button[@data-dismiss="modal"]  5
+  Run Keyword If  ${status}  Wait Until Keyword Succeeds  10 x  1 s  Закрити модалку з новинами
+  Wait Until Element Is Visible  id=tenderssearch-tender_cbd_id
+  Input text  id=tenderssearch-tender_cbd_id  ${tender_uaid}
+  Click Element  xpath=//button[@data-test-id="search"]
   Wait Until Keyword Succeeds  30x  400ms  Перейти на сторінку з інформацією про тендер  ${tender_uaid}
 
 Перейти на сторінку з інформацією про тендер
   [Arguments]  ${tender_uaid}
-  Click Element  xpath=//h3[contains(text(),'${tender_uaid}') and contains('${tender_uaid}',text())]/ancestor::div[@class="row"]/descendant::a[contains(@href,'/tender/view/')]
-  Wait Until Element Is Visible  xpath=//*[@tid="tenderID"]
+  Click Element  xpath=//*[contains(text(),'${tender_uaid}') and contains('${tender_uaid}', normalize-space(text()))]/ancestor::div[@class="search-result"]/descendant::a[contains(@href,"/view/")]
+  Wait Until Keyword Succeeds  20 x  1 s  Element Should Be Visible  xpath=//*[@data-test-id="tenderID"]
 
 Оновити сторінку з тендером
   [Arguments]  ${username}  ${tender_uaid}
@@ -217,8 +215,8 @@ Login
 Задати питання
   [Arguments]  ${username}  ${tender_uaid}  ${question}  ${item_id}=False
   centrex.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  Wait Until Element Is Enabled  xpath=//a[@tid="sidebar.questions"]
-  Click Element  xpath=//a[@tid="sidebar.questions"]
+  Wait Until Element Is Enabled  xpath=//a[@data-test-id="sidebar.questions"]
+  Click Element  xpath=//a[@data-test-id="sidebar.questions"]
   ${status}  ${item_option}=   Run Keyword And Ignore Error   Get Text   //option[contains(text(), '${item_id}')]
   Run Keyword If  '${status}' == 'PASS'   Select From List By Label  name=Question[questionOf]  ${item_option}
   Input Text  name=Question[title]  ${question.data.title}
@@ -251,23 +249,24 @@ Login
 Отримати інформацію із тендера
   [Arguments]  ${username}  ${tender_uaid}  ${field_name}
   ${red}=  Evaluate  "\\033[1;31m"
+  Run Keyword If  'title' in '${field_name}'  Execute Javascript  $("[data-test-id|='title']").css("text-transform", "unset")
   ${value}=  Run Keyword If
-  ...  'status' in '${field_name}'  Отримати інформацію про статус  ${field_name}
-  ...  ELSE IF  'value' in '${field_name}'  Get Text  xpath=//*[@tid="value.amount"]
-  ...  ELSE IF  '${field_name}' == 'auctionPeriod.startDate'  Get Text  xpath=(//*[@tid="tenderPeriod.endDate"])[2]
-  ...  ELSE IF  '${field_name}' == 'dgfDecisionDate'  Get Element Attribute  xpath=//*[@tid="dgfDecisionDate"]@data-ddate
-  ...  ELSE IF  '${field_name}' == 'tenderAttempts'  Get Element Attribute  xpath=//*[@tid="tenderAttempts"]@at_count
-  ...  ELSE IF  'cancellations' in '${field_name}'  Get Text  xpath=//*[@tid="${field_name.replace('[0]','')}"]
-  ...  ELSE  Get Text  xpath=//*[@tid="${field_name.replace('auction', 'tender')}"]
+  ...  'awards' in '${field_name}'  Отримати інформацію про авард  ${username}  ${tender_uaid}  ${field_name}
+  ...  ELSE IF  'status' in '${field_name}'  Отримати інформацію про статус  ${field_name}
+  ...  ELSE IF  '${field_name}' == 'auctionPeriod.startDate'  Get Text  xpath=//*[@data-test-id="auctionPeriod.startDate"]
+  ...  ELSE IF  '${field_name}' == 'tenderAttempts'  Get Element Attribute  xpath=//*[@data-test-id="tenderAttempts"]@data-test-value
+  ...  ELSE IF  'cancellations' in '${field_name}'  Get Text  xpath=//*[@data-test-id="${field_name.replace('[0]','')}"]
+  ...  ELSE  Get Text  xpath=//*[@data-test-id="${field_name.replace('auction', 'tender')}"]
   ${value}=  adapt_view_data  ${value}  ${field_name}
   [return]  ${value}
 
 Отримати інформацію про статус
   [Arguments]  ${field_name}
-  Click Element   xpath=//a[text()='Інформація про аукціон']
+  Run Keyword And Ignore Error  Click Element   xpath=//a[text()='Інформація про аукціон']
+  Reload Page
   ${value}=  Run Keyword If  'cancellations' in '${field_name}'
   ...  Get Text  xpath=//div[contains(@class,'alert-danger')]/h3[1]
-  ...  ELSE  Get Text  xpath=//h2[@tid="${field_name.split('.')[-1]}"]
+  ...  ELSE  Get Text  xpath=//*[@data-test-id="${field_name.split('.')[-1]}"]
   [return]  ${value.lower()}
 
 Отримати інформацію із предмету
@@ -277,8 +276,7 @@ Login
   ${value}=  Run Keyword If
   ...  'unit.code' in '${field_name}'  Log To Console   ${red}\n\t\t\t Це поле не виводиться на centrex
   ...  ELSE IF  'deliveryLocation' in '${field_name}'  Log To Console  ${red}\n\t\t\t Це поле не виводиться на centrex
-  ...  ELSE IF  'unit' in '${field_name}'  Get Text  xpath=//i[contains(text(), '${item_id}')]/ancestor::div[@class="item no_border"]/descendant::*[@tid='items.quantity']
-  ...  ELSE  Get Text  xpath=//i[contains(text(), '${item_id}')]/ancestor::div[@class="item no_border"]/descendant::*[@tid='items.${field_name}']
+  ...  ELSE  Get Text  xpath=//*[contains(text(), '${item_id}')]/ancestor::div[contains(@class,"item-inf_txt")]/descendant::*[@data-test-id='item.${field_name}']
   ${value}=  adapt_view_item_data  ${value}  ${field_name}
   [return]  ${value}
 
@@ -291,9 +289,9 @@ Login
 Отримати інформацію із запитання
   [Arguments]  ${username}  ${tender_uaid}  ${question_id}  ${field_name}
   centrex.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  Wait Until Element Is Enabled  xpath=//a[@tid="sidebar.questions"]
-  Click Element  xpath=//a[@tid="sidebar.questions"]
-  ${value}=  Get Text  xpath=//h4[contains(text(),'${question_id}')]/../descendant::*[@tid='questions.${field_name}']
+  Wait Until Element Is Enabled  xpath=//a[@data-test-id="sidebar.questions"]
+  Click Element  xpath=//a[@data-test-id="sidebar.questions"]
+  ${value}=  Get Text  xpath=//*[contains(text(),'${question_id}')]/../descendant::*[@data-test-id='question.${field_name}']
   [return]  ${value}
 
 Отримати інформацію із пропозиції
@@ -317,13 +315,13 @@ Login
 Отримати кількість документів в тендері
   [Arguments]  ${username}  ${tender_uaid}
   centrex.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  ${number_of_documents}=  Get Matching Xpath Count  //div[@class="document"]
+  ${number_of_documents}=  Get Matching Xpath Count  //*[@data-test-id="document.title"]
   [return]  ${number_of_documents}
 
 Отримати інформацію із документа по індексу
   [Arguments]  ${username}  ${tender_uaid}  ${document_index}  ${field}
   centrex.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  ${doc_value}=  Get Text  xpath=(//div[@class="document"])[${document_index + 1}]/div[2]/div[2]/b/i
+  ${doc_value}=  Get Text  xpath=(//*[@data-test-id="documentType"])[${document_index + 1}]
   ${doc_value}=  convert_string_from_dict_centrex  ${doc_value}
   [return]  ${doc_value}
 
@@ -336,28 +334,36 @@ Login
   ${status}=  Get From Dictionary  ${bid['data']}  qualified
   ${file_path}=  get_upload_file_path
   centrex.Пошук тендера по ідентифікатору   ${username}  ${tender_uaid}
-  Wait Until Element Is Visible   xpath=//input[contains(@name, '[value][amount]')]
-  ConvToStr And Input Text  xpath=//input[contains(@name, '[value][amount]')]  ${bid.data.value.amount}
+  Run Keyword And Ignore Error  centrex.Скасувати цінову пропозицію  ${username}  ${tender_uaid}
+  Run Keyword If  '${MODE}' != 'dgfInsider'  ConvToStr And Input Text  xpath=//input[contains(@name, '[value][amount]')]  ${bid.data.value.amount}
+  ...  ELSE  Click Element  xpath=//input[@id="bid-participate"]/..
   Choose File  name=FileUpload[file]  ${file_path}
-  Run Keyword If  '${MODE}' == 'dgfFinancialAssets'
+  Run Keyword If  '${MODE}' == 'dgfFinancialAssets'  Run Keywords
   ...  Select From List By Value  xpath=(//*[contains(@name,'[documentType]')])[last()]  financialLicense
+  ...  AND  Click Element  xpath=//*[@id="bid-checkforunlicensed"]/..
   ...  ELSE  Select From List By Value  xpath=(//*[contains(@name,'[documentType]')])[last()]  commercialProposal
   Click Element  xpath=//button[contains(text(), 'Відправити')]
-  Wait Until Element Is Visible  name=delete_bids
+  Wait Until Element Is Visible  xpath=//div[contains(@class,'alert-success')]
+  Run Keyword If  '${MODE}' != 'dgfInsider'  Опублікувати Пропозицію  ${status}
+
+Опублікувати Пропозицію
+  [Arguments]  ${status}
   ${url}=  Log Location
   Run Keyword If  ${status}
-  ...  Go To  http://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
-  ...  ELSE  Go To  http://eauction.centrex.com.ua/bids/decline/${url.split('?')[0].split('/')[-1]}
+  ...  Go To  http://centrex.byustudio.in.ua/bids/send/${url.split('?')[0].split('/')[-1]}?token=465
+  ...  ELSE  Go To  http://centrex.byustudio.in.ua/bids/decline/${url.split('?')[0].split('/')[-1]}?token=465
   Go To  ${url}
   Wait Until Keyword Succeeds  6 x  30 s  Run Keywords
   ...  Reload Page
-  ...  AND  Page Should Contain  Статус - опублiковано
+  ...  AND  Page Should Contain  опубліковано
 
 Скасувати цінову пропозицію
   [Arguments]  ${username}  ${tender_uaid}
   centrex.Пошук тендера по ідентифікатору   ${username}  ${tender_uaid}
-  Execute Javascript  window.confirm = function(msg) { return true; }
   Click Element  xpath=//button[@name="delete_bids"]
+  Wait Until Element Is Visible  xpath=//button[@data-bb-handler="confirm"]
+  Click Element  xpath=//button[@data-bb-handler="confirm"]
+  Wait Until Element Is Visible  xpath=//input[contains(@name, '[value][amount]')]
 
 Змінити цінову пропозицію
   [Arguments]  ${username}  ${tender_uaid}  ${fieldname}  ${fieldvalue}
@@ -370,28 +376,27 @@ Login
   Run Keyword If  '${MODE}' == 'dgfFinancialAssets'
   ...  Select From List By Value  xpath=(//*[contains(@name,'[documentType]')])[last()]  financialLicense
   ...  ELSE  Select From List By Value  xpath=(//*[contains(@name,'[documentType]')])[last()]  commercialProposal
+  Click Element  xpath=//*[@id="bid-checkforunlicensed"]/..
   Click Element  xpath=//button[contains(text(), 'Відправити')]
-  Wait Until Element Is Visible  name=delete_bids
-  ${url}=  Log Location
-  Go To  http://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
-  Go To  ${url}
+  Wait Until Element Is Visible  xpath=//div[contains(@class,'alert-success')]
+  Опублікувати Пропозицію  ${True}
 
 Завантажити документ в ставку
   [Arguments]  ${username}  ${path}  ${tender_uaid}  ${doc_type}=documents
   centrex.Пошук тендера по ідентифікатору   ${username}  ${tender_uaid}
-  ${value}=  centrex.Отримати інформацію із пропозиції  ${username}  ${tender_uaid}  ${EMPTY}
-  centrex.Скасувати цінову пропозицію  ${username}  ${tender_uaid}
-  Wait Until Element Is Visible   xpath=//input[contains(@name, '[value][amount]')]
-  ConvToStr And Input Text  xpath=//input[contains(@name, '[value][amount]')]  ${value}
+  ${value}=  Run Keyword If  '${MODE}' != 'dgfInsider'  Run Keywords
+  ...  centrex.Отримати інформацію із пропозиції  ${username}  ${tender_uaid}  ${EMPTY}
+  ...  AND  centrex.Скасувати цінову пропозицію  ${username}  ${tender_uaid}
+  ...  AND  Wait Until Element Is Visible   xpath=//input[contains(@name, '[value][amount]')]
+  ...  AND  ConvToStr And Input Text  xpath=//input[contains(@name, '[value][amount]')]  ${value}
+  ...  AND  Click Element  xpath=//*[@id="bid-checkforunlicensed"]/..
   Choose File  name=FileUpload[file]  ${path}
-  Run Keyword If  '${MODE}' == 'dgfFinancialAssets'
+  Run Keyword If  '${MODE}' != 'dgfOtherAssets'
   ...  Select From List By Value  xpath=(//*[contains(@name,'[documentType]')])[last()]  financialLicense
   ...  ELSE  Select From List By Value  xpath=(//*[contains(@name,'[documentType]')])[last()]  commercialProposal
   Click Element  xpath=//button[contains(text(), 'Відправити')]
-  Wait Until Element Is Visible  name=delete_bids
-  ${url}=  Log Location
-  Go To  http://eauction.centrex.com.ua/bids/send/${url.split('?')[0].split('/')[-1]}
-  Go To  ${url}
+  Wait Until Element Is Visible  xpath=//div[contains(@class,'alert-success')]
+  Опублікувати Пропозицію  ${True}
 
 Завантажити фінансову ліцензію
   [Arguments]  ${username}  ${tender_uaid}  ${filepath}
@@ -408,14 +413,17 @@ Login
 Отримати посилання на аукціон для глядача
   [Arguments]  ${username}  ${tender_uaid}  ${lot_id}=${Empty}
   centrex.Пошук тендера по ідентифікатору   ${username}  ${tender_uaid}
-  ${auction_url}  Get Element Attribute  xpath=(//a[text()= 'Перебіг аукціону'])[1]@href
+  ${auction_url}  Get Element Attribute  xpath=(//a[contains(@href, "openprocurement.org/auctions")])[1]@href
   [return]  ${auction_url}
 
 Отримати посилання на аукціон для учасника
   [Arguments]  ${username}  ${tender_uaid}
   centrex.Пошук тендера по ідентифікатору   ${username}  ${tender_uaid}
-  ${auction_url}  Get Element Attribute  xpath=(//a[text()= 'Перебіг аукціону'])[1]@href
-  [return]  ${auction_url}
+  Click Element  xpath=//a[@class="auction_seller_url"]
+  Select Window  new
+  ${auction_url}=  Get Location
+  Select Window
+  [return]  ${auction_url.split("&return_url")[0]}
 
 
 ###############################################################################################################
