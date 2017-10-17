@@ -53,6 +53,12 @@ def convert_string_from_dict_centrex(string):
         u'Інформація про учасників': u'bidders',
         u'прав вимоги за кредитами': u'dgfFinancialAssets',
         u'майна банків': u'dgfOtherAssets',
+        u'очікується протокол': u'pending.verification',
+        u'на черзі': u'pending.waiting',
+        u'очікується підписання договору': u'pending.payment',
+        u'переможець': u'active',
+        u'рiшення скасовано': u'cancelled',
+        u'дискваліфіковано': u'unsuccessful',
     }.get(string, string)
 
 
