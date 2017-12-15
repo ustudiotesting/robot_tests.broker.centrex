@@ -23,13 +23,18 @@ def convert_datetime_to_centrex_format(isodate):
     return day_string
 
 
+def convert_date_to_template_format(date, template_in, template_out):
+    return datetime.strptime(date, template_in).strftime(template_out)
+
+
 def convert_string_from_dict_centrex(string):
     return {
         u"грн": u"UAH",
-        u"Голландський аукціон": u"dgfInsider",
         u"True": u"1",
         u"False": u"0",
         u'Класифікація згідно CAV': u'CAV',
+        u'Класифікація згідно CAV-PS': u'CAV-PS',
+        u'Класифікація згідно CPV': u'CPV',
         u'з урахуванням ПДВ': True,
         u'без урахуванням ПДВ': False,
         u'очiкування пропозицiй': u'active.tendering',
@@ -38,7 +43,7 @@ def convert_string_from_dict_centrex(string):
         u'квалiфiкацiя переможця': u'active.qualification',
         u'торги не відбулися': u'unsuccessful',
         u'продаж завершений': u'complete',
-        u'торги відмінено': u'cancelled',
+        u'торги скасовано': u'cancelled',
         u'торги були відмінені.': u'active',
         u'Юридична Інформація про Майданчики': u'x_dgfPlatformLegalDetails',
         u'Презентація': u'x_presentation',
@@ -51,12 +56,11 @@ def convert_string_from_dict_centrex(string):
         u'Критерії оцінки': u'evaluationCriteria',
         u'Пояснення до питань заданих учасниками': u'clarifications',
         u'Інформація про учасників': u'bidders',
-        u'прав вимоги за кредитами': u'dgfFinancialAssets',
-        u'майна банків': u'dgfOtherAssets',
+        u'майна замовника': u'dgfOtherAssets',
         u'очікується протокол': u'pending.verification',
         u'на черзі': u'pending.waiting',
         u'очікується підписання договору': u'pending.payment',
-        u'переможець': u'active',
+        u'оплачено, очікується підписання договору': u'active',
         u'рiшення скасовано': u'cancelled',
         u'дискваліфіковано': u'unsuccessful',
     }.get(string, string)
@@ -64,14 +68,14 @@ def convert_string_from_dict_centrex(string):
 
 def adapt_procuringEntity(role_name, tender_data):
     if role_name == 'tender_owner':
-        tender_data['data']['procuringEntity']['name'] = u"Ольмек"
+        tender_data['data']['procuringEntity']['name'] = u"ТЕСТОВА КОМПАНІЯ"
     return tender_data
 
 
 def adapt_view_data(value, field_name):
     if field_name == 'value.amount':
         value = float(value)
-    elif field_name == 'minimalStep.amount':
+    elif field_name in ('minimalStep.amount', 'guarantee.amount'):
         value = float(value.split(' ')[0])
     elif field_name == 'tenderAttempts':
         value = int(value)
@@ -85,12 +89,16 @@ def adapt_view_data(value, field_name):
         value = value.split(" ")[1]
     elif 'Date' in field_name:
         value = convert_time(value)
+    elif field_name == 'minNumberOfQualifiedBids':
+        value = int(value)
     return convert_string_from_dict_centrex(value)
 
 
 def adapt_view_item_data(value, field_name):
     if 'quantity' in field_name:
-        value = float(value.split(' ')[0])
+        value = float(value.replace(",", "."))
+    elif 'contractPeriod' in field_name:
+        value = "{}T00:00:00+02:00".format(convert_date_to_template_format(value, "%d/%m/%Y %H:%M:%S", "%Y-%m-%d"))
     return convert_string_from_dict_centrex(value)
 
 
