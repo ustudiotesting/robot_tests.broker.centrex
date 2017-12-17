@@ -67,10 +67,10 @@ Login
   Select From List By Value  id=tender-minnumberofqualifiedbids  ${minNumberOfQualifiedBids}
   Input Date  name=Tender[auctionPeriod][startDate]  ${tender_data.data.auctionPeriod.startDate}
   :FOR  ${index}  IN RANGE  ${number_of_items}
-  \  Run Keyword If  ${index} != 0  Click Element  xpath=(//button[@id="add-item"])[last()]
+  \  Run Keyword If  ${index} != 0  Scroll And Click  xpath=(//button[@id="add-item"])[last()]
   \  Додати предмет  ${items[${index}]}  ${index}
   Select From List By Index  id=contact-point-select  1
-  Click Element  id=btn-submit-form
+  Scroll And Click  id=btn-submit-form
   Wait Until Page Contains Element  xpath=//*[@data-test-id="tenderID"]  10
   ${tender_uaid}=  Get Text  xpath=//*[@data-test-id="tenderID"]
   [return]  ${tender_uaid}
@@ -82,15 +82,16 @@ Login
   Input text  name=Tender[items][${index}][description]  ${item.description}
   Input text  name=Tender[items][${index}][quantity]  ${quantity}
   Select From List By Label  xpath=(//*[@id="classification-scheme"])[last()]  ${item.classification.scheme}
-  Click Element  name=Tender[items][${index}][classification][description]
+  Scroll And Click  name=Tender[items][${index}][classification][description]
   Wait Until Element Is Visible  id=search_code   30
   Input text  id=search_code  ${item.classification.id}
   Wait Until Page Contains  ${item.classification.id}
-  Click Element  xpath=//span[contains(text(),'${item.classification.id}')]
-  Click Element  id=btn-ok
+  Scroll And Click  xpath=//span[contains(text(),'${item.classification.id}')]
+  Scroll And Click  id=btn-ok
   Run Keyword And Ignore Error  Wait Until Element Is Not Visible  xpath=//div[@class="modal-backdrop fade"]  10
   Select From List By Value  name=Tender[items][${index}][unit][code]  ${item.unit.code}
   Select From List By Label  name=Tender[items][${index}][address][countryName]  ${item.deliveryAddress.countryName}
+  Wait Until Keyword Succeeds  5 x  1 s  Page Should Contain Element  xpath=//select[@name="Tender[items][${index}][address][region]"]/option[contains(text(),"${item.deliveryAddress.region}")]
   Select From List By Label  name=Tender[items][${index}][address][region]  ${item.deliveryAddress.region}
   Input text  name=Tender[items][${index}][address][locality]  ${item.deliveryAddress.locality}
   Input text  name=Tender[items][${index}][address][streetAddress]  ${item.deliveryAddress.streetAddress}
@@ -173,7 +174,7 @@ Login
   [Arguments]  ${username}  ${tender_uaid}  ${accessDetails}  ${title}=Familiarization with bank asset
   centrex.Пошук тендера по ідентифікатору   ${username}   ${tender_uaid}
   Click Element  xpath=//a[contains(text(),'Редагувати')]
-  Click Element  xpath=//button[@data-type="x_dgfAssetFamiliarization"]
+  Scroll And Click  xpath=//button[@data-type="x_dgfAssetFamiliarization"]
   Wait Until Element Is Visible  xpath=(//input[@class="document-access-details"])[last()]
   Input Text  xpath=(//input[@class="document-access-details"])[last()]  ${accessDetails}
   Input Text  xpath=(//input[@class="document-title"])[last()]  ${title}
