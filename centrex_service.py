@@ -146,13 +146,5 @@ def adapt_lot_data(field, value):
     return value
 
 
-def convert_period_date(date):
-    if date == 'P1M':
-        date = '30'
-    else:
-        date = '30'
-    return date
-
-
 def download_file(url, filename, folder):
     urllib.urlretrieve(url, ('{}/{}'.format(folder, filename)))

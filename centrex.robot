@@ -6,9 +6,6 @@ Library  String
 Library  DateTime
 Library  centrex_service.py
 
-*** Variables ***
-
-
 *** Keywords ***
 
 Підготувати клієнт для користувача
@@ -53,7 +50,6 @@ Library  centrex_service.py
 
 Створити об'єкт МП
     [Arguments]  ${username}  ${tender_data}
-    ${data}=  Get Data  ${tender_data}
     ${decisions}=   Get From Dictionary   ${tender_data.data}   decisions
     ${items}=  Get From Dictionary  ${tender_data.data}  items
     Click Element  xpath=//button[@data-target="#toggleRight"]
@@ -61,16 +57,16 @@ Library  centrex_service.py
     Click Element  xpath=//nav[@id="toggleRight"]/descendant::a[contains(@href, "/assets/index")]
     centrex.Закрити Модалку
     Click Element  xpath=//a[contains(@href, "/buyer/asset/create")]
-    Input Text  id=asset-title  ${data.title}
-    Input Text  id=asset-description  ${data.description}
+    Input Text  id=asset-title  ${tender_data.data.title}
+    Input Text  id=asset-description  ${tender_data.data.description}
     Input Text  id=decision-0-title  ${decisions[0].title}
     Input Text  id=decision-0-decisionid  ${decisions[0].decisionID}
     ${decision_date}=  convert_date_for_decision  ${decisions[0].decisionDate}
     Input Text  id=decision-0-decisiondate  ${decision_date}
     Click Element  id=assetHolder-checkBox
     Wait Until Element Is Visible  id=organization-assetholder-name
-    Input Text  id=organization-assetholder-name  ${data.assetHolder.name}
-    Input Text  id=identifier-assetholder-id  ${data.assetHolder.identifier.id}
+    Input Text  id=organization-assetholder-name  ${tender_data.data.assetHolder.name}
+    Input Text  id=identifier-assetholder-id  ${tender_data.data.assetHolder.identifier.id}
     ${items_length}=  Get Length  ${items}
     :FOR  ${item}  IN RANGE  ${items_length}
     \  Log  ${items[${item}]}
@@ -103,7 +99,7 @@ Library  centrex_service.py
     Select From List By Value  xpath=//*[@id="unit-${item_number}-code"]  ${item_data.unit.code}
     Select From List By Value  xpath=//*[@id="address-${item_number}-countryname"]  ${item_data.address.countryName}
     Scroll To  xpath=//*[@id="address-${item_number}-region"]
-    Select From List By Value  xpath=//*[@id="address-${item_number}-region"]  ${item_data.address.region.replace(u' область', u'')}
+    Select From List By Value  xpath=//*[@id="address-${item_number}-region"]  ${item_data.address.region.replace(u' область', u'').replace('місто Київ', 'Київ')}
     Input Text  xpath=//*[@id="address-${item_number}-locality"]  ${item_data.address.locality}
     Input Text  xpath=//*[@id="address-${item_number}-streetaddress"]  ${item_data.address.streetAddress}
     Input Text  xpath=//*[@id="address-${item_number}-postalcode"]  ${item_data.address.postalCode}
@@ -208,7 +204,6 @@ Library  centrex_service.py
 
 Отримати інформацію із об'єкта МП
     [Arguments]  ${username}  ${tender_uaid}  ${field}
-    ${red}=  Evaluate  "\\033[1;31m"
     Run Keyword If  'title' in '${field}'  Execute Javascript  $("[data-test-id|='title']").css("text-transform", "unset")
     ${value}=  Run Keyword If  '${field}' == 'assetCustodian.identifier.legalName'  Get Text  xpath=//div[@data-test-id="assetCustodian.identifier.legalName"]
     ...  ELSE IF  'assetHolder.identifier.id' in '${field}'  Get Text  //*[@data-test-id="assetHolder.identifier.id"]
@@ -228,7 +223,6 @@ Library  centrex_service.py
 
 Отримати інформацію з активу об'єкта МП
     [Arguments]  ${username}  ${tender_uaid}  ${object_id}  ${field}
-    ${red}=  Evaluate  "\\033[1;31m"
     ${field}=  Set Variable If  '[' in '${field}'  ${field.split('[')[0]}${field.split(']')[1]}  ${field}
     ${value}=  Run Keyword If
     ...  '${field}' == 'classification.scheme'  Get Text  //*[contains(text(),'${object_id}')]/ancestor::div[2]/descendant::div[@data-test-id="item.classification.scheme"]
@@ -292,8 +286,7 @@ Library  centrex_service.py
 
 Заповнити дані для другого аукціону
     [Arguments]  ${auction}
-    ${tenderingDuration}=  convert_period_date  ${auction.tenderingDuration}
-    Input Text  name=Lot[auctions][1][tenderingDuration]  ${tenderingDuration}
+    Input Text  name=Lot[auctions][1][tenderingDuration]  30
     Input Text  name=Lot[auctions][2][auctionParameters][dutchSteps]  99
     Scroll To And Click Element  id=btn-submit-form
     Wait Until Element Is Visible  xpath=//a[contains(@href, "lot/update")]
@@ -334,7 +327,6 @@ Library  centrex_service.py
 
 Отримати інформацію із лоту
     [Arguments]  ${username}  ${tender_uaid}  ${field}
-    ${red}=  Evaluate  "\\033[1;31m"
     Run Keyword If  'title' in '${field}'  Execute Javascript  $("[data-test-id|='title']").css("text-transform", "unset")
     ${value}=  Run Keyword If  '${field}' == 'lotCustodian.identifier.legalName'  Get Text  xpath=//div[@data-test-id="procuringEntity.name"]
     ...  ELSE IF  'lotHolder.identifier.id' in '${field}'  Get Text  //*[@data-test-id="assetHolder.identifier.id"]
@@ -376,7 +368,6 @@ Library  centrex_service.py
 
 Отримати інформацію з активу лоту
     [Arguments]  ${username}  ${tender_uaid}  ${object_id}  ${field}
-    ${red}=  Evaluate  "\\033[1;31m"
     ${field}=  Set Variable If  '[' in '${field}'  ${field.split('[')[0]}${field.split(']')[1]}  ${field}
     ${value}=  Run Keyword If
     ...  '${field}' == 'classification.scheme'  Get Text  //*[contains(text(),'${object_id}')]/ancestor::div[2]/following-sibling::div[2]/div/span
@@ -520,11 +511,6 @@ Input Date Auction
     [Return]  ${file_name}
 
 
-Scroll
-    [Arguments]  ${locator}
-    Execute JavaScript    window.scrollTo(0,0)
-
-
 Scroll To
     [Arguments]  ${locator}
     ${y}=  Get Vertical Position  ${locator}
@@ -545,42 +531,7 @@ Scroll To And Click Element
     ...  AND  Wait Until Element Is Not Visible  xpath=//*[contains(@class, "modal-backdrop")]
 
 
-Adapt And Select By Value
-    [Arguments]  ${locator}  ${value}
-    ${value}=  Convert To String  ${value}
-    ${value}=  adapted_dictionary  ${value}
-    Select From List By Value  ${locator}  ${value}
-
-
 Convert Input Data To String
     [Arguments]  ${locator}  ${value}
     ${value}=  Convert To String  ${value}
     Input Text  ${locator}  ${value}
-
-
-Get Data
-    [Arguments]  ${tender_data}
-    [Return]  ${tender_data.data}
-
-
-Close Sidebar
-    Click Element  xpath=//*[@id="slidePanelToggle"]
-
-
-Wait For Document Upload
-    Wait Until Keyword Succeeds  30 x  5 s  Run Keywords
-    ...  Refresh Page
-    ...  AND  Run Keyword And Ignore Error  Click Element  xpath=//*[@data-test-id="sidebar.edit"]
-    ...  AND  Wait Until Element Is Visible  xpath=//*[@id="auction-form"]
-
-Select From List By Converted Value
-    [Arguments]  ${locator}  ${value}
-    ${converted_value}=  Convert To String  ${value}
-    Select From List By Value  ${locator}  ${converted_value}
-
-
-Compare Number Elements
-    [Arguments]  ${n_items}
-    ${items}=  Get Matching Xpath Count  xpath=//div[@data-test-id="item.description"]
-    ${actual_items}=  Convert To Integer  ${items}
-    Should Be Equal  ${actual_items}  ${n_items + 1}
