@@ -99,7 +99,7 @@ Library  centrex_service.py
     Select From List By Value  xpath=//*[@id="unit-${item_number}-code"]  ${item_data.unit.code}
     Select From List By Value  xpath=//*[@id="address-${item_number}-countryname"]  ${item_data.address.countryName}
     Scroll To  xpath=//*[@id="address-${item_number}-region"]
-    Select From List By Value  xpath=//*[@id="address-${item_number}-region"]  ${item_data.address.region.replace(u' область', u'').replace('місто Київ', 'Київ')}
+    Select From List By Value  xpath=//*[@id="address-${item_number}-region"]  ${item_data.address.region.replace(u' область', u'').replace(u'місто Київ', u'Київ')}
     Input Text  xpath=//*[@id="address-${item_number}-locality"]  ${item_data.address.locality}
     Input Text  xpath=//*[@id="address-${item_number}-streetaddress"]  ${item_data.address.streetAddress}
     Input Text  xpath=//*[@id="address-${item_number}-postalcode"]  ${item_data.address.postalCode}
