@@ -3,6 +3,7 @@
 from datetime import datetime
 import pytz
 import urllib
+import re
 
 
 tz = str(datetime.now(pytz.timezone('Europe/Kiev')))[26:]
@@ -58,6 +59,15 @@ def convert_date_from_decision(date):
 def convert_date_for_decision(date):
     date = datetime.strptime(date, '%Y-%m-%d'.format(tz)).strftime('%d/%m/%Y')
     return '{}'.format(date)
+
+
+def convert_duration(duration):
+    if duration == u'P1M':
+        duration = u'P30D'
+    days = re.search('\d+D|$', duration).group()
+    if len(days) > 0:
+        days = days[:-1]
+    return days
 
 
 def adapted_dictionary(value):

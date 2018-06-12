@@ -20,7 +20,6 @@ Library  centrex_service.py
     Run Keyword If  'Viewer' not in '${username}'  Run Keywords
     ...  Авторизація  ${username}
     ...  AND  Run Keyword And Ignore Error  Закрити Модалку
-    Run Keyword And Ignore Error  Закрити Модалку
 
 
 Підготувати дані для оголошення тендера
@@ -286,8 +285,9 @@ Library  centrex_service.py
 
 Заповнити дані для другого аукціону
     [Arguments]  ${auction}
-    Input Text  name=Lot[auctions][1][tenderingDuration]  30
-    Input Text  name=Lot[auctions][2][auctionParameters][dutchSteps]  99
+    ${duration}=  convert_duration  ${auction.tenderingDuration}
+    Input Text  name=Lot[auctions][1][tenderingDuration]  ${duration}
+    Input Text  name=Lot[auctions][2][auctionParameters][dutchSteps]  20
     Scroll To And Click Element  id=btn-submit-form
     Wait Until Element Is Visible  xpath=//a[contains(@href, "lot/update")]
     Click Element  name=verification_submit
@@ -298,7 +298,7 @@ Library  centrex_service.py
 Додати умови проведення аукціону
   [Arguments]  ${username}  ${auction}  ${index}  ${tender_uaid}
   Run Keyword If  ${index} == 0  Заповнити дані для першого аукціону  ${username}  ${tender_uaid}  ${auction}
-  Run Keyword If  ${index} == 1  Заповнити дані для другого аукціону  ${auction}
+  ...  ELSE  Заповнити дані для другого аукціону  ${auction}
 
 
 
@@ -464,11 +464,11 @@ Library  centrex_service.py
     centrex.Пошук лоту по ідентифікатору  ${username}  ${tender_uaid}
     Click Element  xpath=//a[contains(@href, "lot/update")]
     Wait Until Element Is Visible  id=decision-title
-    Run Keyword If  '${fieldname}' == 'value.amount'  Input Amount  name=Lot[auctions][0][value][amount]  ${fieldvalue}
-    ...  ELSE IF  '${fieldname}' == 'minimalStep.amount'  Input Amount  name=Lot[auctions][0][minimalStep][amount]  ${fieldvalue}
-    ...  ELSE IF  '${fieldname}' == 'guarantee.amount'  Input Amount  name=Lot[auctions][0][guarantee][amount]  ${fieldvalue}
-    ...  ELSE IF  '${fieldname}' == 'registrationFee.amount'  Input Amount  name=Lot[auctions][0][registrationFee][amount]  ${fieldvalue}
-    ...  ELSE IF  '${fieldname}' == 'auctionPeriod.startDate'  Input Date Auction  name=Lot[auctions][0][auctionPeriod][startDate]  ${fieldvalue}
+    Run Keyword If  '${fieldname}' == 'value.amount'  Input Amount  name=Lot[auctions][${index}][value][amount]  ${fieldvalue}
+    ...  ELSE IF  '${fieldname}' == 'minimalStep.amount'  Input Amount  name=Lot[auctions][${index}][minimalStep][amount]  ${fieldvalue}
+    ...  ELSE IF  '${fieldname}' == 'guarantee.amount'  Input Amount  name=Lot[auctions][${index}][guarantee][amount]  ${fieldvalue}
+    ...  ELSE IF  '${fieldname}' == 'registrationFee.amount'  Input Amount  name=Lot[auctions][${index}][registrationFee][amount]  ${fieldvalue}
+    ...  ELSE IF  '${fieldname}' == 'auctionPeriod.startDate'  Input Date Auction  name=Lot[auctions][${index}][auctionPeriod][startDate]  ${fieldvalue}
     Scroll To And Click Element  //*[@name="simple_submit"]
     Wait Until Element Is Visible  xpath=//div[@data-test-id="lotID"]
 
