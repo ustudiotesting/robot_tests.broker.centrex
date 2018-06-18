@@ -281,6 +281,11 @@ Library  centrex_service.py
   Input Text  name=Lot[auctions][0][minimalStep][amount]  ${minimalStep}
   Input Text  name=Lot[auctions][0][guarantee][amount]  ${guarantee}
   Input Date Auction  name=Lot[auctions][0][auctionPeriod][startDate]  ${auction.auctionPeriod.startDate}
+  Input Text  name=Lot[auctions][0][bankAccount][bankName]  ${auction.bankAccount.bankName}
+  ${bank_id}=  adapt_edrpou  ${auction.bankAccount.accountIdentification[0].id}
+  Input Text  name=Lot[auctions][0][bankAccount][accountIdentification][0][id]  ${bank_id}
+  Input Text  name=Lot[auctions][0][bankAccount][accountIdentification][1][id]  123456
+  Input Text  name=Lot[auctions][0][bankAccount][accountIdentification][2][id]  1234567890
 
 
 Заповнити дані для другого аукціону

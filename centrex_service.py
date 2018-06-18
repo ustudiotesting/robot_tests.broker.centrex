@@ -81,6 +81,7 @@ def adapted_dictionary(value):
         u'Торги скасовано': 'cancelled',
         u'об’єкт реєструється': u'registering',
         u'об’єкт зареєстровано': u'complete',
+        u'Об’єкт зареєстровано': u'complete',
         u'Опубліковано': u'pending',
         u'Актив завершено': u'complete',
         u'Публікація інформаційного повідомлення': u'composing',
@@ -153,6 +154,13 @@ def adapt_lot_data(field, value):
         value = int(value)
     else:
         value = adapted_dictionary(value)
+    return value
+
+
+def adapt_edrpou(value):
+    value = str(value)
+    if len(value) == 7:
+        value += '0'
     return value
 
 
