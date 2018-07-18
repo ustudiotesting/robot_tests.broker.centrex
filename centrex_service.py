@@ -76,6 +76,8 @@ def adapted_dictionary(value):
         u'Класифікація згідно CAV-PS': 'CAV-PS',
         u'Класифікація згідно CPV': 'CPV',
         u'Аукцiон': 'active.auction',
+        u'Аукціон': 'active.auction',
+        u'Очiкування пропозицiй': 'active.tendering',
         u'Торги не відбулися': 'unsuccessful',
         u'Продаж завершений': 'complete',
         u'Торги скасовано': 'cancelled',
@@ -89,6 +91,7 @@ def adapted_dictionary(value):
         u'lot.status.pending.deleted': u'pending.deleted',
         u'Лот видалено': u'deleted',
         u'Інформація': u'informationDetails',
+        u'open_sellout.english_2': u'sellout.english',
         u'Заплановано': u'scheduled'
     }.get(value, value)
 
@@ -101,6 +104,8 @@ def adapt_data(field, value):
     elif field == 'minimalStep.amount':
         value = float(value.split(' ')[0])
     elif field == 'guarantee.amount':
+        value = float(value.split(' ')[0])
+    elif field == 'registrationFee.amount':
         value = float(value.split(' ')[0])
     elif field == 'quantity':
         value = float(value.replace(',', '.'))
