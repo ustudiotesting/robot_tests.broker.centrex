@@ -364,7 +364,7 @@ ${host}  http://centrex.byustudio.in.ua
     ...  Reload Page
     ...  AND  Page Should Contain Element  xpath=//div[@data-test-id="status"][contains(text(), "Аукціон")]
     ${value}=  Run Keyword If  'procurementMethodType' in '${field}'  Get Element Attribute  xpath=//input[@name="auction.${lot_index}.procurementMethodType"]@value
-    ...  ELSE IF  'value.amount' in '${field}'  Get Text  xpath=(//div[contains(text(), "Початкова ціна продажу лота")]/following-sibling::div)[${lot_index + 1}]
+    ...  ELSE IF  'value.amount' in '${field}'  Get Text  xpath=(//div[contains(text(), "Початкова ціна продажу")]/following-sibling::div)[${lot_index + 1}]
     ...  ELSE IF  'minimalStep.amount' in '${field}'  Get Text  xpath=(//div[contains(text(), "Крок аукціону")]/following-sibling::div)[${lot_index + 1}]
     ...  ELSE IF  'guarantee.amount' in '${field}'  Get Text  xpath=(//div[contains(text(), "Гарантійний внесок")]/following-sibling::div)[${lot_index + 1}]
     ...  ELSE IF  'tenderingDuration' in '${field}'  Get Text  xpath=(//div[contains(text(), "Період на подачу пропозицій")]/following-sibling::div)[${lot_index}]
