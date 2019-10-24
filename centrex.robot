@@ -34,7 +34,7 @@ ${host}  http://test-eauction.centrex.com.ua/
 
 Авторизуватися
     [Arguments]  ${username}
-    Click Element  xpath=//*[contains(@href, "/login")]
+    Click Element  xpath=//*[contains(@href,"/login")]
     Wait Until Element Is Visible  xpath=//button[@name="login-button"]
     Input Text  xpath=//input[@id="loginform-username"]  ${USERS.users['${username}'].login}
     Input Text  xpath=//input[@id="loginform-password"]  ${USERS.users['${username}'].password}
