@@ -87,7 +87,7 @@ def adapted_dictionary(value):
         u'lot.status.pending.deleted': u'pending.deleted',
         u'Об’єкт виключено': u'deleted',
         u'iншi': u'informationDetails',
-        u'об’єктів малої приватизації': u'sellout.english',
+        u'Оголошення аукціону з продажу об’єктів малої приватизації': u'sellout.english',
         u'Заплановано': u'scheduled',
         u'Виконано': u'met',
         u'Не виконано': u'notMet',
