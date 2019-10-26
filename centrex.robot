@@ -133,7 +133,7 @@ ${host}  http://test-eauction.centrex.com.ua/
 
 Синхронізуватися із ЦБД
     ${url}=  Get Location
-    Run Keyword If  'view' not in '${url}'  Click Element  xpath=//a[@data-test-id="sidebar.info"]
+    Run Keyword If  'view' not in '${url}'  Click Element  xpath=//div[@class="mk-slide-panel_toggle"]
     Go To  ${url.replace('view', 'json').replace('award', 'json').replace('buyer/', '').replace('seller/', '')}
     Go To  ${url}
 
