@@ -790,8 +790,8 @@ ${host}  http://test-eauction.centrex.com.ua/
     Wait Until Element Is Visible  xpath=//div[contains(text(), "Завантаження протоколу")]
     Choose File  xpath=//div[@id="verification-form-upload-file"]/descendant::input[@name="FileUpload[file][]"]  ${file_path}
     Wait Until Element Is Visible  xpath=//button[contains(@class, "delete-file-verification")]
-    Click Element  xpath=//button[@name="protokol_ok"]
-    Wait Until Element Is Not Visible  xpath=//button[@name="protokol_ok"]
+    Click Element  xpath=//button[@name="protocol_upload"]
+    Wait Until Element Is Not Visible  xpath=//button[@name="protocol_upload"]
     Wait Until Keyword Succeeds  30 x  20 s  Run Keywords
     ...  Reload Page
     ...  AND  Page Should Not Contain Element  xpath=//button[@onclick="window.location.reload();"]
