@@ -320,6 +320,7 @@ ${host}  http://test-eauction.centrex.com.ua/
     [Arguments]  ${username}  ${tender_uaid}
     Switch Browser  my_alias
     Go To  ${USERS.users['${username}'].homepage}
+    Закрити Модалку
     Wait until element is visible  xpath=//a[contains(text(), "м.Приватизац")]
     Click Element  xpath=//a[contains(text(), "м.Приватизац")]
     Wait Until Element Is Visible  xpath=//a[contains(@href, "lots/index")][contains(text(), "Інформаційні повідомлення")]
@@ -404,7 +405,7 @@ ${host}  http://test-eauction.centrex.com.ua/
     ${index}=  Set Variable  ${field.split('[')[1].split(']')[0]}
     ${index}=  Convert To Integer  ${index}
     ${value}=  Run Keyword If  'title' in '${field}'  Get Text  xpath=(//div[@data-test-id="decision.title"])[${index + 1}]
-    ...  ELSE IF  'decisionDate' in '${field}'  Get Text  xpath=(//div[@data-test-id="decision.decisionDate"])[${index + 1}]
+    ...  ELSE IF  'decisionDate' in '${field}'  Get Text  xpath=//div[@data-test-id="decision.decisionDate"]
     ...  ELSE IF  'decisionID' in '${field}'  Get Text  xpath=(//div[@data-test-id="decision.decisionID"])[${index + 1}]
     [Return]  ${value}
 
@@ -534,6 +535,7 @@ ${host}  http://test-eauction.centrex.com.ua/
     Switch Browser  my_alias
     Go To  ${USERS.users['${username}'].homepage}
     Sleep  3
+    Закрити Модалку
     Scroll To And Click Element  xpath=//li[@class="dropdown"]/descendant::*[@class="dropdown-toggle"][contains(@href, "tenders")]
     Click Element  xpath=//*[@class="dropdown-menu"]/descendant::*[contains(@href, "/tenders/index")]
     Wait Until Element Is Visible  xpath=//button[contains(text(), "Шукати")]
