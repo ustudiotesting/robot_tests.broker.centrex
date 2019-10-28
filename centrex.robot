@@ -895,7 +895,7 @@ ${host}  http://test-eauction.centrex.com.ua/
     Click Element  xpath=//button[@data-bb-handler="confirm"]
     Wait Until Keyword Succeeds  10 x  5 s  Run Keywords
     ...  Reload Page
-    ...  AND  Page Should Contain Element  xpath=//div[@data-test-id="status"][contains(text(), "Аукціон відбувся (або 1 учасник)")]
+    ...  AND  Page Should Contain Element  xpath=//div[@data-test-id="status"][contains(text(), "Аукціон завершено. Договір підписано")]
 
 
 Перейти на сторінку кваліфікації
