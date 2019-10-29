@@ -6,8 +6,7 @@ import urllib
 import re
 
 
-# tz = str(datetime.now(pytz.timezone('Europe/Kiev')))[26:]
-tz = str(datetime.now(pytz.timezone('Africa/Juba')))[26:]
+tz = str(datetime.now(pytz.timezone('Europe/Kiev')))[26:]
 
 
 def prepare_tender_data_asset(tender_data):
