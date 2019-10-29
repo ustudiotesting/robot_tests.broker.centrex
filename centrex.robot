@@ -8,7 +8,7 @@ Library  centrex_service.py
 Library  op_robot_tests.tests_files.service_keywords
 
 *** Variables ***
-${host}  http://test-eauction.centrex.com.ua/
+${host}  http://test-eauction.centrex.com.ua
 
 *** Keywords ***
 
