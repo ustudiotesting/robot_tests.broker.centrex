@@ -177,7 +177,7 @@ ${host}  http://test-eauction.centrex.com.ua
     Wait Until Element Is Visible  //div[contains(@class,'alert-success')]
     Wait Until Keyword Succeeds  30 x  10 s  Run Keywords
     ...  Синхронізуватися із ЦБД
-    ...  AND  Wait Until Page Contains  Об’єкт виключено  10
+    ...  AND  Wait Until Page Contains  Об’єкт виключено  20
 
 
 Завантажити ілюстрацію в об'єкт МП
