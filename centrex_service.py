@@ -67,7 +67,7 @@ def adapted_dictionary(value):
         u'Аукціон не відбувся': 'unsuccessful',
         u'Аукціон відбувся (або 1 учасник)': 'complete',
         u'Торги скасовано': 'cancelled',
-        u'Аукціон відмінено': 'cancelled',
+        u'Торги відмінено': 'cancelled',
         u'Квалiфiкацiя переможця': 'active.qualification',
         u'Прийняття заяв на участь': 'active.qualification',
         u'Очікується опублікування протоколу': 'active.qualification',
