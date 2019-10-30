@@ -211,6 +211,7 @@ ${host}  http://test-eauction.centrex.com.ua
 
 Отримати інформацію із об'єкта МП
     [Arguments]  ${username}  ${tender_uaid}  ${field}
+    Синхронізуватися із ЦБД
     Run Keyword If  'title' in '${field}'  Execute Javascript  $("[data-test-id|='title']").css("text-transform", "unset")
     ${value}=  Run Keyword If  '${field}' == 'assetCustodian.identifier.legalName'  Get Text  xpath=//div[@data-test-id="assetCustodian.identifier.legalName"]
     ...  ELSE IF  'assetHolder.identifier.id' in '${field}'  Get Text  //*[@data-test-id="assetHolder.identifier.id"]
