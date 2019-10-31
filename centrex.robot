@@ -941,6 +941,7 @@ ${host}  http://test-eauction.centrex.com.ua
 Отримати інформацію із договору
     [Arguments]  ${username}  ${contract_uaid}  ${field}
     centrex.Пошук договору по ідентифікатору  ${username}  ${contract_uaid}
+    Синхронізуватися із ЦБД
     ${value}=  Get Text  xpath=//div[@data-test-id="${field}"]
     ${value}=  adapted_dictionary  ${value}
     [Return]  ${value}
