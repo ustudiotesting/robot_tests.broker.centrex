@@ -232,7 +232,7 @@ ${host}  http://test-eauction.centrex.com.ua
 Пошук статуса із об'єкта МП
     Wait until keyword succeeds  40 x  10 s  Run Keywords
     ...  Reload Page
-    ...  AND Page Should Contain element xpath=//div[@data-test-id="status"][contains(text(), "Об’єкт виключено")]
+    ...  AND  Page Should Contain element  xpath=//div[@data-test-id="status"][contains(text(), "Об’єкт виключено")]
     ${value}=  Get Element Attribute  xpath=//input[@id="asset_status"]@value
     [Return]  ${value}
 
