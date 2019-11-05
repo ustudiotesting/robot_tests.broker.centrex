@@ -230,12 +230,10 @@ ${host}  http://test-eauction.centrex.com.ua
     [Return]  ${value}
 
 Пошук статуса із об'єкта МП
-    [Arguments]  ${status}
-    ${value}=  Run Keyword If  '${status}' == 'deleted'  Wait until keyword succeeds  40 x  10 s  Run Keywords
+    Wait until keyword succeeds  40 x  10 s  Run Keywords
         ...  Reload Page
         ...  AND  Page Should Contain element  xpath=//div[@data-test-id="status"][contains(text(), "Об’єкт виключено")]
-        ...  AND  Get Element Attribute  xpath=//input[@id="asset_status"]@value
-    ...  ELSE  Get Element Attribute  xpath=//input[@id="asset_status"]@value
+    ${value}=  Get Element Attribute  xpath=//input[@id="asset_status"]@value
     [Return]  ${value}
 
 Отримати інформацію з активу об'єкта МП
