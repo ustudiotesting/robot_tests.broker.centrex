@@ -218,7 +218,6 @@ ${host}  http://test-eauction.centrex.com.ua
     ...  ELSE IF  'assetHolder.identifier.scheme' in '${field}'  Get Text  //*[@data-test-id="assetHolder.identifier.scheme"]
     ...  ELSE IF  'assetHolder.name' in '${field}'  Get Text  //*[@data-test-id="assetHolder.name"]
     ...  ELSE IF  'status' in '${field}'  Пошук статуса із об'єкта МП
-#    ...  ELSE IF  'status' in '${field}'   Get Element Attribute  xpath=//input[@id="asset_status"]@value
     ...  ELSE IF  '${field}' == 'assetID'  Get Text  xpath=//div[@data-test-id="tenderID"]
     ...  ELSE IF  '${field}' == 'description'  Get Text  xpath=//div[@data-test-id="item.description"]
     ...  ELSE IF  '${field}' == 'documents[0].documentType'  Get Text  xpath=//span[@data-test-id="document.type"]
@@ -230,7 +229,7 @@ ${host}  http://test-eauction.centrex.com.ua
     [Return]  ${value}
 
 Пошук статуса із об'єкта МП
-    Wait until keyword succeeds  40 x  10 s  Run Keywords
+    Run keyword if  "Відображення статусу 'Виключено з переліку'" == "${TEST NAME}"  Wait until keyword succeeds  40 x  10 s  Run Keywords
         ...  Reload Page
         ...  AND  Page Should Contain element  xpath=//div[@data-test-id="status"][contains(text(), "Об’єкт виключено")]
     ${value}=  Get Element Attribute  xpath=//input[@id="asset_status"]@value
