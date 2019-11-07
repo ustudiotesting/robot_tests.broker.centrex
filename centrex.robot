@@ -219,13 +219,21 @@ ${host}  http://test-eauction.centrex.com.ua
     ...  ELSE IF  'assetHolder.name' in '${field}'  Get Text  //*[@data-test-id="assetHolder.name"]
     ...  ELSE IF  'status' in '${field}'  Пошук статуса із об'єкта МП
     ...  ELSE IF  '${field}' == 'assetID'  Get Text  xpath=//div[@data-test-id="tenderID"]
-    ...  ELSE IF  '${field}' == 'description'  Get Text  xpath=//div[@data-test-id="item.description"]
+    ...  ELSE IF  '${field}' == 'description'  Пошук опису із об'єкта МП  ${field}
     ...  ELSE IF  '${field}' == 'documents[0].documentType'  Get Text  xpath=//span[@data-test-id="document.type"]
     ...  ELSE IF  'rectificationPeriod' in '${field}'  Get Text  xpath=//div[@data-test-id="rectificationPeriod"]
     ...  ELSE IF  'decisions' in '${field}'  Отримати інформацію про decisions  ${field}
     ...  ELSE IF  'assetCustodian.identifier.id' in '${field}'  Get Text  xpath=(//*[@data-test-id='${field}'])[last()]
     ...  ELSE  Get Text  xpath=//*[@data-test-id='${field}']
     ${value}=  adapt_asset_data  ${field}  ${value}
+    [Return]  ${value}
+
+Пошук опису із об'єкта МП
+    [Arguments]  ${field}
+    Run keyword if  "Відображення зміненого опису об'єкта МП" == "${TEST NAME}"  Wait until keyword succeeds  40 x  10 s  Run Keywords
+        ...  Reload Page
+        ...  AND  Page Should Contain element  xpath=//div[@data-test-id="item.description"][contains(text(), "${field}")]
+    ${value}=  Get Text  xpath=//div[@data-test-id="item.description"]
     [Return]  ${value}
 
 Пошук статуса із об'єкта МП
@@ -246,7 +254,6 @@ ${host}  http://test-eauction.centrex.com.ua
     ...  ELSE  Get Text  //div[contains(text(),'${object_id}')]/ancestor::div[contains(@class, "item-inf_txt")]/descendant::*[@data-test-id="item.${field}"]
     ${value}=  adapt_data  ${field}  ${value}
     [Return]  ${value}
-
 
 Отримати кількість активів в об'єкті МП
     [Arguments]  ${username}  ${tender_uaid}
@@ -736,7 +743,6 @@ ${host}  http://test-eauction.centrex.com.ua
     centrex.Пошук Тендера По Ідентифікатору  ${username}  ${tender_uaid}
     Wait Until Element Is Visible  //a[@class="auction_seller_url"]
     ${current_url}=  Get Location
-#    Execute Javascript  window['url'] = null; $.get( "${host}/seller/tender/updatebid", { id: "${current_url.split("/")[-1]}"}, function(data){ window['url'] = data.data.participationUrl },'json');
     Execute Javascript  window['url'] = null; $.get( "${USERS.users['${username}'].homepage}/seller/tender/updatebid", { id: "${current_url.split("/")[-1]}"}, function(data){ window['url'] = data.data.participationUrl },'json');
     Wait Until Keyword Succeeds  20 x  1 s  JQuery Ajax Should Complete
     ${link}=  Execute Javascript  return window['url'];
@@ -1091,6 +1097,9 @@ Input Date Auction
 
 Отримати документ
     [Arguments]  ${username}  ${TENDER['TENDER_UAID']}  ${doc_id}
+    Run keyword if  "Відображення вмісту документації до об'єкта МП" == "${TEST NAME}"  Wait until keyword succeeds  40 x  10 s  Run Keywords
+        ...  Reload Page
+        ...  AND  Page Should Contain element  xpath=//a[contains(text(), '${doc_id}')]
     ${file_name}=  Get Text  xpath=//a[contains(text(), '${doc_id}')]
     ${url}=  Get Element Attribute  xpath=//a[contains(text(), '${doc_id}')]@href
     download_file  ${url}  ${file_name}  ${OUTPUT_DIR}
