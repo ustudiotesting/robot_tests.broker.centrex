@@ -219,7 +219,8 @@ ${host}  http://test-eauction.centrex.com.ua
     ...  ELSE IF  'assetHolder.name' in '${field}'  Get Text  //*[@data-test-id="assetHolder.name"]
     ...  ELSE IF  'status' in '${field}'  Пошук статуса із об'єкта МП
     ...  ELSE IF  '${field}' == 'assetID'  Get Text  xpath=//div[@data-test-id="tenderID"]
-    ...  ELSE IF  '${field}' == 'description'  Пошук опису із об'єкта МП  ${field}
+    ...  ELSE IF  '${field}' == 'description'  Get Text  xpath=//div[@data-test-id="item.description"]
+#    ...  ELSE IF  '${field}' == 'description'  Пошук опису із об'єкта МП  ${field}
     ...  ELSE IF  '${field}' == 'documents[0].documentType'  Get Text  xpath=//span[@data-test-id="document.type"]
     ...  ELSE IF  'rectificationPeriod' in '${field}'  Get Text  xpath=//div[@data-test-id="rectificationPeriod"]
     ...  ELSE IF  'decisions' in '${field}'  Отримати інформацію про decisions  ${field}
@@ -228,13 +229,13 @@ ${host}  http://test-eauction.centrex.com.ua
     ${value}=  adapt_asset_data  ${field}  ${value}
     [Return]  ${value}
 
-Пошук опису із об'єкта МП
-    [Arguments]  ${field}
-    Run keyword if  "Відображення зміненого опису об'єкта МП" == "${TEST NAME}"  Wait until keyword succeeds  40 x  10 s  Run Keywords
-        ...  Reload Page
-        ...  AND  Page Should Contain element  xpath=//div[@data-test-id="item.description"][contains(text(), "${field}")]
-    ${value}=  Get Text  xpath=//div[@data-test-id="item.description"]
-    [Return]  ${value}
+#Пошук опису із об'єкта МП
+#    [Arguments]  ${field}
+#    Run keyword if  "Відображення зміненого опису об'єкта МП" == "${TEST NAME}"  Wait until keyword succeeds  40 x  10 s  Run Keywords
+#        ...  Reload Page
+#        ...  AND  Page Should Contain element  xpath=//div[@data-test-id="item.description"][contains(text(), "${field}")]
+#    ${value}=  Get Text  xpath=//div[@data-test-id="item.description"]
+#    [Return]  ${value}
 
 Пошук статуса із об'єкта МП
     Run keyword if  "Відображення статусу 'Виключено з переліку'" == "${TEST NAME}"  Wait until keyword succeeds  40 x  10 s  Run Keywords
