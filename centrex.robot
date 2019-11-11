@@ -652,6 +652,9 @@ ${host}  http://test-eauction.centrex.com.ua
 Змінити цінову пропозицію
     [Arguments]  ${username}  ${tender_uaid}  ${field}  ${value}
     centrex.Пошук Тендера По Ідентифікатору  ${username}  ${tender_uaid}
+    Wait Until Element Is Visible  xpath=//button[@id="delete_bid"]
+    Click Element  xpath=//button[@id="delete_bid"]
+    Reload Page
     Wait Until Element Is Visible  xpath=//input[@id="value-amount"]
     Convert Input Data To String  xpath=//input[@id="value-amount"]  ${value}
     Click Element  xpath=//button[@id="submit_bid"]
