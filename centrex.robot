@@ -345,7 +345,7 @@ ${host}  http://test-eauction.centrex.com.ua
     ...  Input Text  id=lotssearch-lot_cbd_id  ${tender_uaid}
     ...  AND  Click Element  xpath=//button[@data-test-id="search"]
     ...  AND  Wait Until Element Is Visible  xpath=//div[@class="search-result"]/descendant::div[contains(text(), "${tender_uaid}")]
-    Wait Until Keyword Succeeds  10 x  500 ms  Xpath Should Match X Times  //div[@class="search-result_article"]  1
+    Wait Until Keyword Succeeds  10 x  500 ms  Xpath Should Match X Times  //div[@class="search-result"]  1
     Click Element  xpath=//div[@class="search-result"]/descendant::div[contains(text(), "${tender_uaid}")]/../following-sibling::div/a
     Wait Until Page Does Not Contain Element  xpath=//button[contains(text(), "Шукати")]  10
     Wait Until Element Is Visible  xpath=//div[@data-test-id="lotID"]
