@@ -850,8 +850,8 @@ ${host}  http://test-eauction.centrex.com.ua
     ${award_status}=  Set Variable If  '${ROLE}' == 'tender_owner'  Рiшення скасовано  Відмова від очікування
     centrex.Пошук Тендера По Ідентифікатору  ${username}  ${tender_uaid}
     Перейти на сторінку кваліфікації
-    Wait Until Element Is Visible  //button[contains(text(), "Забрати гарантійний внесок")]
-    Click Element  //button[contains(text(), "Забрати гарантійний внесок")]
+    Wait Until Element Is Visible  //button[contains(text(), "Відмовитись від очікування")]
+    Click Element  //button[contains(text(), "Відмовитись від очікування")]
     Wait Until Element Is Visible  //div[contains(text(), "Подальшу участь буде скасовано")]
     Click Element  //*[@class="modal-footer"]/button[contains(text(), "Застосувати")]
     Wait Until Element Is Not Visible  //*[@class="modal-footer"]/button[contains(text(), "Застосувати")]
